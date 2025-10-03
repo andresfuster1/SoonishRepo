@@ -42,25 +42,39 @@ export function AuthProvider({ children }) {
   }
 
   async function signup(email, password, displayName) {
-    const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    
-    // Update the user's display name
-    await updateProfile(user, { displayName });
-    
-    // Create user profile in Firestore
-    const userProfile = {
-      id: user.uid,
-      name: displayName,
-      email: email,
-      avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`,
-      friends: [],
-      createdAt: new Date().toISOString()
-    };
-    
-    await setDoc(doc(db, 'users', user.uid), userProfile);
-    setUserProfile(userProfile);
-    
-    return user;
+    try {
+      console.log('Creating user account...');
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('User created successfully:', user.uid);
+      
+      // Update the user's display name
+      console.log('Updating user profile...');
+      await updateProfile(user, { displayName });
+      
+      // Create user profile in Firestore
+      console.log('Creating user document in Firestore...');
+      const userProfile = {
+        id: user.uid,
+        name: displayName,
+        email: email,
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`,
+        friends: [],
+        createdAt: new Date().toISOString()
+      };
+      
+      await setDoc(doc(db, 'users', user.uid), userProfile);
+      setUserProfile(userProfile);
+      console.log('User signup completed successfully');
+      
+      return user;
+    } catch (error) {
+      console.error('Signup error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      throw error;
+    }
   }
 
   function login(email, password) {

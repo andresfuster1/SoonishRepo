@@ -29,8 +29,41 @@ export default function Login() {
       
       navigate('/');
     } catch (error) {
-      setError('Failed to ' + (isLogin ? 'sign in' : 'create account'));
-      console.error(error);
+      console.error('Auth error:', error);
+      
+      // Handle specific Firebase error codes
+      let errorMessage = 'Failed to ' + (isLogin ? 'sign in' : 'create account');
+      
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'An account with this email already exists';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password should be at least 6 characters';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection';
+          break;
+        case 'auth/configuration-not-found':
+          errorMessage = 'Firebase configuration error. Please contact support';
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+      
+      setError(errorMessage);
     }
     
     setLoading(false);

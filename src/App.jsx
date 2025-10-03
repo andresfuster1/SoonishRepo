@@ -10,6 +10,7 @@ import Notifications from './components/Notifications/Notifications';
 import FriendsList from './components/Friends/FriendsList';
 import Login from './components/Auth/Login';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import FirebaseDebug from './components/Debug/FirebaseDebug';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
                   </ProtectedRoute>
                 } />
               </Routes>
+              <FirebaseDebug />
             </div>
           </Router>
         </NotificationsProvider>
